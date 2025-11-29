@@ -1,0 +1,42 @@
+# --------------------------------------
+# Python
+# --------------------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+
+# Virtual environments
+.venv/
+env/
+venv/
+
+# IDEs
+.idea/
+.vscode/
+
+# --------------------------------------
+# Build / Distribution
+# --------------------------------------
+build/
+dist/
+*.egg-info/
+*.egg
+*.whl
+
+# PyInstaller
+*.spec
+
+# Cache
+*.log
+*.tmp
+.cache/
+.mypy_cache/
+.pytest_cache/
+coverage.xml
+htmlcov/
+
+# OS files
+.DS_Store
+Thumbs.db
