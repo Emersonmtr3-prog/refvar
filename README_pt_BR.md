@@ -17,7 +17,6 @@ O objetivo principal é resolver o problema onde a importação de variáveis si
   - `ref(new_value)` `.set()` para atualizar
   - `ref()` `.get()` para pegar o conteúdo 
   - `.bind()` `.unbind()` para chamar uma funcao
-- Seguro por design — suporta **apenas tipos simples**
 
 ---
 

@@ -22,8 +22,6 @@ The main goal is to solve the problem where importing simple variables into diff
 
 - `.bind()` `.unbind()` to call a function
 
-- Safe by design — supports **only simple types**
-
 ---
 
 ## ✨ Features
