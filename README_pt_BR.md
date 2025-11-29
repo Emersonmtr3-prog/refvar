@@ -1,9 +1,8 @@
 # refvar
 
-Um sistema de variável reativa para Python, leve e sem dependências.  
-`refvar` permite armazenar valores simples e executar callbacks automaticamente sempre que o valor é alterado.
+`refvar` é uma biblioteca leve e reativa para gerenciamento de referências em Python. Ela permite criar referências mutáveis para tipos imutáveis (como `str`, `int`, `bool`) que podem ser compartilhadas entre múltiplos módulos e atualizadas centralmente.
 
-Ideal para pequenas aplicações, controle de estado ou padrões reativos simples — sem precisar de frameworks.
+O objetivo principal é resolver o problema onde a importação de variáveis simples em diferentes arquivos perde o vínculo com o valor original. Além disso, a biblioteca suporta **callbacks**, permitindo executar funções automaticamente sempre que o valor é alterado.
 
 ---
 
@@ -15,15 +14,25 @@ Ideal para pequenas aplicações, controle de estado ou padrões reativos simple
 - Zero dependências
 - API simples e intuitiva:
   - `ref(value)`
-  - `ref(new_value)` para atualizar
-  - `.get()`, `.set()`, `.bind()`, `.unbind()`
+  - `ref(new_value)` `.set()` para atualizar
+  - `ref()` `.get()` para pegar o conteúdo 
+  - `.bind()` `.unbind()` para chamar uma funcao
 - Seguro por design — suporta **apenas tipos simples**
 
 ---
 
-## ⚠ Tipos Suportados
+## ✨ Funcionalidades
 
-`Ref` é intencionalmente limitado a **valores simples e imutáveis**:
+- **Fonte Única da Verdade:** Passe variáveis entre módulos sem perder a referência.
+- **Reatividade:** "Binde" (vincule) callbacks que disparam ao atualizar o valor.
+- **Sintaxe Pythonica:** Implementa métodos mágicos (`__call__`, `__eq__`, `__bool__`, `__str__`) para uso intuitivo.
+- **Leve:** Utiliza `__slots__` para alta eficiência de memória.
+
+---
+
+## ✅ Tipos Recomendados
+
+`Ref` é recomendado a **valores simples e imutáveis**:
 
 - `str`
 - `int`
@@ -33,7 +42,7 @@ Ideal para pequenas aplicações, controle de estado ou padrões reativos simple
 
 Isso evita comportamentos inesperados com objetos mutáveis.
 
-### ❌ Não recomendado para:
+## ⚠️ Não recomendado para:
 
 - `list`
 - `dict`
@@ -70,4 +79,12 @@ def ao_mudar(ref, novo_valor):
 x.bind(ao_mudar)
 
 x(20)   # Atualiza o valor e dispara o callback
-print(x.value)  # 20
+
+value = x()
+print(value, type(value))  # 20 <class 'int'>
+
+value = x.get()
+print(value, type(value))  # 20 <class 'int'>
+
+value = x
+print(value, type(value))  # 20 <class 'ref.core.Ref'>

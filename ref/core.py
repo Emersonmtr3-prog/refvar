@@ -1,3 +1,5 @@
+_NOT_SET = object() # Sentinela para permitir setar None
+
 class Ref:
     """
     A lightweight reactive variable for simple immutable types.
@@ -7,22 +9,20 @@ class Ref:
 
     __slots__ = ("value", "callbacks")
 
-    SIMPLE_TYPES = (str, int, float, bool, type(None))
-
     def __init__(self, value=None):
-        if not isinstance(value, self.SIMPLE_TYPES):
-            raise TypeError("Ref supports only: str, int, float, bool, or None.")
         self.value = value
         self.callbacks = set()
 
-    def __call__(self, new_value):
+    def __call__(self, new_value=_NOT_SET):
         """Updates the value like a function call: ref(new_value)."""
-        self.set(new_value)
-        return self
+        if new_value is _NOT_SET:
+            return self.value  # Getter style: ref()
 
-    def set(self, new_value):
-        if not isinstance(new_value, self.SIMPLE_TYPES):
-            raise TypeError("Ref supports only: str, int, float, bool, or None.")
+        return self.set(new_value)
+
+    def set(self, new_value=None):
+        if self.value == new_value:
+            return self
 
         for callback in self.callbacks:
             callback(self, new_value)
