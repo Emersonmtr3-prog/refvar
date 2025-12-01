@@ -1,104 +1,189 @@
 # refvar
 
-`refvar` is a lightweight and reactive library for reference management in Python. It allows you to create mutable references to immutable types (such as `str`, `int`, `bool`) that can be shared across multiple modules and updated centrally.
+`refvar` is a lightweight, reactive, and efficient library for managing shared values ​​in Python.
 
-The main goal is to solve the problem where importing simple variables into different files loses the link to the original value. Additionally, the library supports **callbacks**, allowing functions to be executed automatically whenever the value changes.
+It allows you to create **reactive variables** that trigger callbacks whenever their content changes—even when the value is mutable, such as lists or dictionaries.
+
+The library is ideal for situations where multiple parts of the code need to share the same centralized variable without losing the original reference.
 
 ---
 
 ## 🚀 Features
 
 - Reactive variable (`Ref`)
-- Callbacks triggered automatically when the value changes
-- Extremely lightweight (< 50 lines)
-- Zero dependencies
+- Automatic callbacks when the value changes
+- Support for **immutable and mutable** values
+- Intelligent interception of mutable methods (`append`, `pop`, `update`, etc.)
+- Lightweight and efficient (`__slots__`)
+- Zero external dependencies
 - Simple and intuitive API:
 
 - `ref(value)`
 
-- `ref(new_value)` `.set()` to update
+- `ref(new_value)` or `.set()`
 
-- `ref()` `.get()` to retrieve the content
+- `ref()` or `.get()` to get the value
 
-- `.bind()` `.unbind()` to call a function
+- `ref(..., raw=True)` to directly call the stored function
+
+- `.bind()` / `.unbind()` for callbacks
 
 ---
 
-## ✨ Features
+## ✨ Functionalities
 
-- **Single Source of Truth:** Pass variables between modules without losing the reference.
+- **Complete reactivity:** any change triggers callbacks.
 
-- **Reactivity:** "Bind" callbacks that trigger when the value is updated.
+- **Compatible with mutable types:** unlike previous versions.
 
-- **Pythonic Syntax:** Implements magic methods (`__call__`, `__eq__`, `__bool__`, `__str__`) for intuitive use.
+- **Python Syntax:** implements magic operators and methods.
 
-- **Lightweight:** Uses `__slots__` for high memory efficiency.
+- **Direct calls with `raw=True`:** execute the value as a function.
+
+- **Maximum lightweight:** designed for performance and low memory usage.
+
+---
+
+## 🧩 What is `raw=True` mode?
+
+The call:
+
+```python
+ref(..., raw=True)
+
+```
+
+allows you to **directly execute the internal value as a function**, without activating the normal *get/set* behavior of `Ref`.
+
+### Examples:
+
+#### 1. Ref to function
+```python
+log = Ref(print)
+
+log("Hello world!", raw=True)
+
+```
+
+Output:
+
+```
+Hello world!
+
+``` ```
+
+#### 2. Ref for custom function
+```python
+def sum(a, b):
+
+return a + b
+
+f = Ref(sum)
+
+print(f(10, 5, raw=True)) # 15
+```
+
+#### 3. Keeps reactivity completely separate
+The `raw` mode **never triggers callbacks**, as it does not alter `ref.value`, it only calls the content.
+
+### When to use `raw=True`?
+
+- When you store a function inside a `Ref`
+
+- When you want to use `Ref` as a functional proxy
+- When you want to avoid reactive logic and just execute something
 
 ---
 
 ## ✅ Recommended Types
 
-`Ref` is recommended for **simple and immutable values**:
+The `Ref` class works well with all types:
 
+### Immutable:
 - `str`
-
 - `int`
-
 - `float`
-
 - `bool`
 
 - `None`
 
-This avoids unexpected behavior with mutable objects.
-
-## ⚠️ Not recommended for:
-
+### Mutable (fully supported in version 0.3.1):
 - `list`
-
 - `dict`
-
 - `set`
-
 - custom classes
-- functions
-- anything mutable
-
-If you need full reactive programming, use a framework —
-`refvar` was specifically designed to be lightweight and simple.
+- objects storable in any Python structure
 
 ---
 
 ## 📦 Installation
 
-```bash
-pip install refvar
+```bash`pip install refvar`
 ```
 
 ---
 
-## 🔧 Usage Example
+## 🔧 Basic Example (immutable)
 
-### Basic Example
+```python``from refvar` ... `on_change(ref, new_value):`
+
+`print("Value changed to:", new_value)`
+
+`x.bind(on_change)`
+
+`x(20)` # Updates and triggers callback
+
+`print(x())` # 20
+`print(x.get())` # 20
+`print(x)` # Ref(20)`
+
+```
+
+---
+
+## 🔧 Example with (mutable) Lists
+
+```python
+list = Ref([])`
+
+`def on_change(ref, new_value):`
+
+`print("List updated:", new_value)`
+
+`list.bind(on_change)`
+
+`list.append(1)` # triggers callback
+`list.append(2)` # triggers callback
+`list.pop()` # triggers callback
+```
+
+Output:
+
+```
+Updated list: [1]
+Updated list: [1, 2]
+Updated list: [1]
+
+```
+
+---
+
+## 🔧 Example of Using `raw=True`
 
 ```python
 from refvar import Ref
 
-x = Ref(10)
+def double(n):
 
-def on_change(ref, new_value):
+return n * 2
 
-print("Value changed to:", new_value)
+f = Ref(double)
 
-x.bind(on_change)
+print(f(5, raw=True)) # 10
+```
 
-x(20) # Updates the value and triggers the callback
+---
 
-value = x()
-print(value, type(value)) # 20 <class 'int'>
+## 📘 License
 
-value = x.get()
-print(value, type(value)) # 20 <class 'int'>
-
-value = x
-print(value, type(value)) # 20 <class 'ref.core.Ref'>
+MIT License.
