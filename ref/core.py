@@ -87,6 +87,12 @@ class Ref:
     def __bool__(self):
         return bool(self.value)
 
+    def __getattr__(self, name):
+        try:
+            return getattr(self.value, name)
+        except AttributeError:
+            raise AttributeError(f"{type(self.value).__name__!r} has no attribute {name!r}")
+
 
 # -------------------------------------------------------------
 # Automatic delegation of immutable operations
@@ -95,8 +101,8 @@ class Ref:
 _DELEGATE = (
     "__add__", "__radd__", "__sub__", "__rsub__", "__mul__", "__rmul__",
     "__truediv__", "__floordiv__", "__mod__", "__pow__", "__getitem__",
-    "__delitem__", "__contains__", "__iter__", "__len__", "__getattr__",
-    "__ne__", "__lt__", "__le__", "__gt__", "__ge__", "__str__", "__iadd__",
+    "__delitem__", "__contains__", "__iter__", "__len__","__ne__",
+    "__lt__", "__le__", "__gt__", "__ge__", "__str__", "__iadd__",
     "__imul__", "__isub__", "__eq__"
 )
 
