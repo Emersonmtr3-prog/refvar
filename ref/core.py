@@ -93,6 +93,20 @@ class Ref:
         except AttributeError:
             raise AttributeError(f"{type(self.value).__name__!r} has no attribute {name!r}")
 
+    def __setattr__(self, name, value):
+        # Internal attributes
+        if name in ("value", "callbacks"):
+            object.__setattr__(self, name, value)
+            return
+
+        # Delegate attribute assignment to underlying value
+        try:
+            old = _safe_copy(self.value)
+            setattr(self.value, name, value)
+            _on_update(self, self.value, old)
+        except Exception:
+            raise AttributeError(f"Cannot set attribute {name!r} on Ref({self.value!r})")
+
 
 # -------------------------------------------------------------
 # Automatic delegation of immutable operations

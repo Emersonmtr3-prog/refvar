@@ -1,6 +1,6 @@
 [project]
 name = "refvar"
-version = "0.3.2"
+version = "0.3.3"
 description = "A lightweight reactive variable for simple values in Python."
 requires-python = ">=3.7"
 authors = [
